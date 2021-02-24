@@ -29,8 +29,9 @@ pub fn os_str_to_cstring<T: AsRef<OsStr>>(s: T) -> Result<CString> {
 }
 
 pub fn errno_to_result(errno: c_int) -> Result<()> {
-    match errno {
-        0 => Ok(()),
-        e => Err(std::io::Error::from_raw_os_error(e)),
+    if errno >= 0 {
+	Ok(())
+    } else {
+	Err(std::io::Error::from_raw_os_error(-errno))
     }
 }
